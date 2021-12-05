@@ -1,0 +1,24 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <h3>All Posts</h3>
+
+    <form action = "{% url 'index' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ new_post.as_table }}
+        </div>
+        <input type="submit" class="btn btn-outline-primary" value="New Post">
+    </form>
+    <div>
+        {% for post in posts %}
+        <div>
+            <p>{{ post.creator }}</p>
+            <p>{{ post.post_text }}</p>
+            <p>{{ post.post_time }}</p>
+            <p>Likes: {{ post.post_likes }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
