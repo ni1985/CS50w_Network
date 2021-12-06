@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .models import User, Post, PostForm
+from .models import User, Post, Follow, PostForm
 
 
 def index(request):
@@ -25,12 +25,41 @@ def index(request):
 
         # retrieve all posts
         posts = Post.objects.select_related('creator').order_by('-post_time')
-        print(posts)
-        print(posts.query)
+        #print(posts)
+        #print(posts.query)
 
         return render(request, "network/index.html", {
             'new_post':new_post_form,
             'posts':posts
+        })
+
+
+def profile(request, user_name):
+    if request.method == "POST":
+        print("post")
+    else:
+        print(user_name)
+        # check if user opens their own profile
+        user_check = 0
+        if user_name == request.user:
+            user_check == 1
+
+        user_post = Post.objects.filter(creator__username = user_name).order_by('-post_time')
+        
+        # Get number of followers
+        followed_by = Follow.objects.filter(subscribed__username = user_name).count()
+        print(f"followed by: {followed_by}")
+        
+        # Get number of users followed by the user
+        follows = Follow.objects.filter(user_id__username = user_name).count()
+        print(f"follows: {follows}")
+
+        return render(request, "network/profile.html", {
+                'user_name': user_name,
+                'posts': user_post,
+                'follows': follows,
+                'followed_by': followed_by,
+                'user_check': user_check
         })
 
 
