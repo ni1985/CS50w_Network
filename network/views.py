@@ -38,27 +38,38 @@ def profile(request, user_name):
     if request.method == "POST":
         print("post")
     else:
-        print(user_name)
-        # check if user opens their own profile
-        user_check = 0
-        if user_name == request.user:
-            user_check == 1
+        
+        # Check if user opens their own profile
+        if (str(request.user) == user_name):
+            user_check = 1
+            print("same user")
+        else: 
+            user_check = 0
+        print(f"User check: {user_check}")
 
         user_post = Post.objects.filter(creator__username = user_name).order_by('-post_time')
         
         # Get number of followers
-        followed_by = Follow.objects.filter(subscribed__username = user_name).count()
-        print(f"followed by: {followed_by}")
+        followed = Follow.objects.filter(subscribed__username = user_name)    
+        followed_users = followed.values_list('user_id__username', flat=True)
+        followed_nr = len(followed_users)
+        print(followed_users)
+        print(followed_nr)
+        print(f"followed by: {followed_nr}")
         
         # Get number of users followed by the user
-        follows = Follow.objects.filter(user_id__username = user_name).count()
-        print(f"follows: {follows}")
+        follows = Follow.objects.filter(user_id__username = user_name)
+        follows_users = follows.values_list('subscribed__username', flat=True)
+        follows_nr = len(follows_users)
+        print(follows_users)
+        print(follows_nr)
+        print(f"follows: {follows_nr}")
 
         return render(request, "network/profile.html", {
                 'user_name': user_name,
                 'posts': user_post,
-                'follows': follows,
-                'followed_by': followed_by,
+                'follows_nr': follows_nr,
+                'followed_nr': followed_nr,
                 'user_check': user_check
         })
 
