@@ -1,0 +1,17 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <h3>Favorites</h3>
+    <div>
+        {% for post in posts %}
+        <div>
+            <p>-----------</p>
+            <a href="{% url 'profile' post.creator %}"><p>{{ post.creator }}</p></a>
+            <p>{{ post.post_text }}</p>
+            <p>{{ post.post_time }}</p>
+            <p>Likes: {{ post.post_likes }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

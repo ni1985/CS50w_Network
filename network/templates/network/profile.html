@@ -7,7 +7,18 @@
     <p>Follows: {{ follows_nr }}</p>
     
     {% if user.is_authenticated and user_check == 0 %}
-        <button type="button">Follow the user</button>
+        <form action = "{% url 'profile' post.creator %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" id="custId" name="follow" value="{{ follow }}">
+            <input type="submit" value="                    
+                {% if follow %}
+                    Unfollow
+                {% else %}
+                    Follow
+                {% endif %}
+                ">
+            </input>
+        </form>
     {% endif %}
 
     <div>

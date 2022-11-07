@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from .models import User, Post, Follow, PostForm
+from django.contrib.auth.decorators import login_required
 
 
 def index(request):
@@ -37,6 +38,11 @@ def index(request):
 def profile(request, user_name):
     if request.method == "POST":
         print("post")
+        #print(request.POST())
+        #follow = Follow.objects.get(user_id__username = request.user)
+        #print(follow)
+    return HttpResponseRedirect(reverse("index"))
+
     else:
         
         # Check if user opens their own profile
@@ -61,6 +67,15 @@ def profile(request, user_name):
         follows = Follow.objects.filter(user_id__username = user_name)
         follows_users = follows.values_list('subscribed__username', flat=True)
         follows_nr = len(follows_users)
+        
+        if (str(request.user) in follows_users):
+            print("you follow this user")
+            follow = True
+        else:
+            print("you do not follow this user")
+            follow = False
+
+
         print(follows_users)
         print(follows_nr)
         print(f"follows: {follows_nr}")
@@ -70,8 +85,26 @@ def profile(request, user_name):
                 'posts': user_post,
                 'follows_nr': follows_nr,
                 'followed_nr': followed_nr,
-                'user_check': user_check
+                'user_check': user_check,
+                'follow': follow
         })
+
+
+@login_required
+def favorites(request):
+    follows = Follow.objects.filter(user_id__username = request.user)
+    follows_users = follows.values_list('subscribed__username', flat=True)
+    follows_nr = len(follows_users)
+
+    # get posts only of teh followed users 
+    user_post = Post.objects.filter(creator__username__in = follows_users).order_by('-post_time')
+
+    print(user_post)
+
+    return render(request, "network/favorites.html", {
+        'posts':user_post
+    })
+
 
 
 def login_view(request):
