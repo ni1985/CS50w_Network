@@ -1,15 +1,18 @@
 {% extends "network/layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block body %}
     <h3>All Posts</h3>
-
-    <form action = "{% url 'index' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            {{ new_post.as_table }}
-        </div>
-        <input type="submit" class="btn btn-outline-primary" value="New Post">
-    </form>
+    {% if user.is_authenticated %}
+        <form action = "{% url 'index' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <!-- {{ new_post.as_table }} -->
+                {{ new_post|crispy }}
+            </div>
+            <input type="submit" class="btn btn-outline-primary" value="New Post">
+        </form>
+    {% endif %}
     <div>
         {% for post in posts %}
         <div>

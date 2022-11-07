@@ -45,8 +45,8 @@ class Follow(models.Model):
         blank = True,
         related_name='followed')
 
-
-class PostForm(ModelForm):
-    class Meta:
-        model = Post
-        fields = ['post_text']
+# MOVED to forms.py
+# class PostForm(ModelForm):
+#    class Meta:
+#        model = Post
+#        fields = ['post_text']
