@@ -42,58 +42,58 @@ def index(request):
 
 
 def profile(request, user_name):
-    if request.method == "POST":
-        print("post")
+    #comment if request.method == "POST":
+    #comment    print("post")
         #print(request.POST())
         #follow = Follow.objects.get(user_id__username = request.user)
         #print(follow)
-        return HttpResponseRedirect(reverse("index"))
+    #comment    return HttpResponseRedirect(reverse("index"))
 
+    # comment else:
+
+    # Check if user opens their own profile
+    if (str(request.user) == user_name):
+        user_check = 1
+        print("same user")
     else:
+        user_check = 0
+    print(f"User check: {user_check}")
 
-        # Check if user opens their own profile
-        if (str(request.user) == user_name):
-            user_check = 1
-            print("same user")
-        else:
-            user_check = 0
-        print(f"User check: {user_check}")
+    user_post = Post.objects.filter(creator__username = user_name).order_by('-post_time')
 
-        user_post = Post.objects.filter(creator__username = user_name).order_by('-post_time')
+    # Get number of followers
+    followed = Follow.objects.filter(subscribed__username = user_name)
+    followed_users = followed.values_list('user_id__username', flat=True)
+    followed_nr = len(followed_users)
+    print(followed_users)
+    print(followed_nr)
+    print(f"followed by: {followed_nr}")
 
-        # Get number of followers
-        followed = Follow.objects.filter(subscribed__username = user_name)
-        followed_users = followed.values_list('user_id__username', flat=True)
-        followed_nr = len(followed_users)
-        print(followed_users)
-        print(followed_nr)
-        print(f"followed by: {followed_nr}")
+    # Get number of users followed by the user
+    follows = Follow.objects.filter(user_id__username = user_name)
+    follows_users = follows.values_list('subscribed__username', flat=True)
+    follows_nr = len(follows_users)
 
-        # Get number of users followed by the user
-        follows = Follow.objects.filter(user_id__username = user_name)
-        follows_users = follows.values_list('subscribed__username', flat=True)
-        follows_nr = len(follows_users)
-
-        if (str(request.user) in follows_users):
-            print("you follow this user")
-            follow = True
-        else:
-            print("you do not follow this user")
-            follow = False
+    if (str(request.user) in follows_users):
+        print("you follow this user")
+        follow = True
+    else:
+        print("you do not follow this user")
+        follow = False
 
 
-        print(follows_users)
-        print(follows_nr)
-        print(f"follows: {follows_nr}")
+    print(follows_users)
+    print(follows_nr)
+    print(f"follows: {follows_nr}")
 
-        return render(request, "network/profile.html", {
-                'user_name': user_name,
-                'posts': user_post,
-                'follows_nr': follows_nr,
-                'followed_nr': followed_nr,
-                'user_check': user_check,
-                'follow': follow
-        })
+    return render(request, "network/profile.html", {
+            'user_name': user_name,
+            'posts': user_post,
+            'follows_nr': follows_nr,
+            'followed_nr': followed_nr,
+            'user_check': user_check,
+            'follow': follow
+    })
 
 
 @login_required

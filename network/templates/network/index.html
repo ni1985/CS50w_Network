@@ -17,7 +17,8 @@
         {% for post in posts %}
         <div>
             <p>-----------</p>
-            <a href="{% url 'profile' post.creator %}"><p>{{ post.creator }}</p></a>
+            <!--<a href="{% url 'profile' post.creator %}"><p>{{ post.creator }}</p></a>-->
+            <a href="/profile/{{ post.creator }}"><p>{{ post.creator }}</p></a>
             <p>{{ post.post_text }}</p>
             <p>{{ post.post_time }}</p>
             <p>Likes: {{ post.post_likes }}</p>
@@ -26,3 +27,5 @@
     </div>
 
 {% endblock %}
+
+ href="/profile/{{ post.user.username }}
