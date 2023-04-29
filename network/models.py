@@ -36,10 +36,12 @@ class Comments(models.Model):
 
 
 class Follow(models.Model):
+    # user who follow
     user_id = models.ForeignKey(
         User,
         on_delete = models.CASCADE,
         related_name='follows')
+    # user who is being followed
     subscribed = models.ManyToManyField(
         User,
         blank = True,

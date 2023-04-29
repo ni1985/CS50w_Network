@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -7,6 +8,8 @@ from .models import User, Post, Follow
 # from .models import User, Post, Follow, PostForm
 from django.contrib.auth.decorators import login_required
 from .forms import PostForm
+from django.http import JsonResponse
+from django.core.paginator import Paginator
 
 
 def index(request):
@@ -33,23 +36,47 @@ def index(request):
         new_post_form = None
 
     # retrieve all posts
-    posts = Post.objects.select_related('creator').order_by('-post_time')
+    posts = Post.objects.select_related('creator').order_by('-post_time')   
+
+    # create a paginator
+    page_number = request.GET.get('page')
+    paginator = Paginator(posts, per_page = 2)
+    page_obj = paginator.get_page(page_number)
+    #context = {"page_obj": page_obj}
 
     return render(request, "network/index.html", {
-        'new_post':new_post_form,
-        'posts':posts
+        'new_post': new_post_form,
+        #'posts':posts # This is replaced by the context object - only one page from the whole post query
+        'posts': page_obj
     })
 
 
 def profile(request, user_name):
-    #comment if request.method == "POST":
-    #comment    print("post")
-        #print(request.POST())
-        #follow = Follow.objects.get(user_id__username = request.user)
-        #print(follow)
-    #comment    return HttpResponseRedirect(reverse("index"))
-
-    # comment else:
+    print(f'user and profile: {request.user},{user_name}')
+    
+    # Subscription to the user
+    if request.user.is_authenticated and (request.user!=user_name):
+        if request.method == 'POST':
+            follow = request.POST.get('follow')
+            print(f"Follow value is{follow}")
+            
+            # query to get usernames
+            user_obj = User.objects.get(username=request.user.username)
+            subscribed_obj = User.objects.get(username=user_name)
+            print(f"subscribed_obj {subscribed_obj}")
+            follow_obj = Follow.objects.filter(Q(user_id = user_obj) & Q(subscribed = subscribed_obj) )
+            
+            # Unsubscribing from the user            
+            if follow_obj.exists():
+                subscribed_user = follow_obj.values_list('subscribed__username', flat=True)
+                print(f"unsubscribing {request.user} from {user_name}")
+                follow_obj.delete()
+            else:
+            # Subscribing to the user
+                print(f"Subscribing {request.user} to {user_name}")
+                follow_obj = Follow(user_id=user_obj)
+                follow_obj.save()
+                follow_obj.subscribed.add(subscribed_obj)     
 
     # Check if user opens their own profile
     if (str(request.user) == user_name):
@@ -59,36 +86,39 @@ def profile(request, user_name):
         user_check = 0
     print(f"User check: {user_check}")
 
+    # Retrieve all posts of the user
     user_post = Post.objects.filter(creator__username = user_name).order_by('-post_time')
 
-    # Get number of followers
+    # create a paginator
+    page_number = request.GET.get('page')
+    paginator = Paginator(user_post, per_page = 2)
+    page_obj = paginator.get_page(page_number)
+
+    # Get number of followed users
     followed = Follow.objects.filter(subscribed__username = user_name)
     followed_users = followed.values_list('user_id__username', flat=True)
     followed_nr = len(followed_users)
     print(followed_users)
-    print(followed_nr)
     print(f"followed by: {followed_nr}")
 
-    # Get number of users followed by the user
+    # Get number of users who follow the user
     follows = Follow.objects.filter(user_id__username = user_name)
     follows_users = follows.values_list('subscribed__username', flat=True)
     follows_nr = len(follows_users)
 
-    if (str(request.user) in follows_users):
+    if (str(request.user) in followed_users):
         print("you follow this user")
         follow = True
     else:
         print("you do not follow this user")
         follow = False
 
-
     print(follows_users)
-    print(follows_nr)
     print(f"follows: {follows_nr}")
 
     return render(request, "network/profile.html", {
             'user_name': user_name,
-            'posts': user_post,
+            'posts': page_obj,
             'follows_nr': follows_nr,
             'followed_nr': followed_nr,
             'user_check': user_check,
@@ -102,13 +132,18 @@ def favorites(request):
     follows_users = follows.values_list('subscribed__username', flat=True)
     follows_nr = len(follows_users)
 
-    # get posts only of teh followed users
+    # get posts only of the followed users
     user_post = Post.objects.filter(creator__username__in = follows_users).order_by('-post_time')
+
+    # create a paginator
+    page_number = request.GET.get('page')
+    paginator = Paginator(user_post, per_page = 2)
+    page_obj = paginator.get_page(page_number)
 
     print(user_post)
 
     return render(request, "network/favorites.html", {
-        'posts':user_post
+        'posts': page_obj
     })
 
 

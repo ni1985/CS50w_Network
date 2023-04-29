@@ -7,7 +7,7 @@
     <p>Follows: {{ follows_nr }}</p>
 
     {% if user.is_authenticated and user_check == 0 %}
-        <form action = "{% url 'profile' post.creator %}" method="post">
+        <form action = "{% url 'profile' user_name %}" method="post" id="follow-form">
             {% csrf_token %}
             <input type="hidden" id="custId" name="follow" value="{{ follow }}">
             <input type="submit" value="
@@ -15,8 +15,7 @@
                     Unfollow
                 {% else %}
                     Follow
-                {% endif %}
-                ">
+                {% endif %}" id="follow-button">
             </input>
         </form>
     {% endif %}
@@ -25,7 +24,7 @@
         {% for post in posts %}
         <div>
             <p>-----------</p>
-            <a href="{% url 'profile' post.creator %}"><p>{{ post.creator }}</p></a>
+            <a href="{% url 'profile' user_name %}"><p>{{ user_name }}</p></a>
             <p>{{ post.post_text }}</p>
             <p>{{ post.post_time }}</p>
             <p>Likes: {{ post.post_likes }}</p>
@@ -33,4 +32,18 @@
         {% endfor %}
     </div>
 
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+        {% if posts.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a></li>  
+        {% endif %}
+
+        {% if posts.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">Next</a></li>
+        {% endif %}
+        </ul>
+    </nav>
+
 {% endblock %}
+
+
