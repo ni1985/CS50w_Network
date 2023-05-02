@@ -13,7 +13,12 @@ document.addEventListener('DOMContentLoaded', function() {
             postEdit.setAttribute('type', 'text');
             postEdit.setAttribute('value', postText.innerText);
             postText.replaceWith(postEdit);
-
+            
+            // move cursor to the back of the text area and select it
+            const end = postEdit.value.length;
+            postEdit.setSelectionRange(end, end);
+            postEdit.focus();  
+            
             editButton.setAttribute("hidden", "hidden");
 
             saveButton = document.getElementById(postId);
@@ -26,7 +31,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveButton.setAttribute("hidden", "hidden");
             });
 
+            // save the text field when the save button is pressed
+            saveButton.addEventListener('click', () => saveText())
         });
-      });
+    });
+
+    function saveText() {
+        console.log("Text is saved")
+    }
 
 });
