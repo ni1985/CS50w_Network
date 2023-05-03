@@ -26,8 +26,8 @@
             <p>{{ post.post_time }}</p>
             <p>Likes: {{ post.post_likes }}</p>
             {% if user.is_authenticated and post.creator == user %}
-                <button type="button" class="btn btn-primary btn-sm edit-post" post-id="{{ post.id }}">Edit</button>
-                <button type="button" class="btn btn-primary btn-sm save-post" id="{{ post.id }}" hidden="hidden">Save</button>
+                <button type="button" class="btn btn-primary btn-sm edit-post" data-post-id="{{ post.id }}">Edit</button>
+                <button type="button" class="btn btn-primary btn-sm save-post" id="save-button-{{ post.id }}" hidden="hidden">Save</button>
             {% endif %}
         </div>
         {% endfor %}

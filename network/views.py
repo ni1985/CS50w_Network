@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import PostForm
 from django.http import JsonResponse
 from django.core.paginator import Paginator
-
+from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
 
@@ -146,8 +146,6 @@ def favorites(request):
         'posts': page_obj
     })
 
-
-
 def login_view(request):
     if request.method == "POST":
 
@@ -198,3 +196,17 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+@csrf_exempt
+@login_required
+def update_post(request):
+    if request.method == 'POST':
+        #post_id = request.POST.get('postId')
+        print(request.POST.get('newPostText'));
+        #new_post_text = request.POST.get('newPostText')
+        #post = Post.objects.get(id=post_id)
+        #post.post_text = new_post_text
+        #print(f"Post creator: {post.creator }")
+        #post.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
