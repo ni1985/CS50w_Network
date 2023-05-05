@@ -11,6 +11,7 @@ from .forms import PostForm
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 def index(request):
 
@@ -24,7 +25,6 @@ def index(request):
                 post = new_post.save(commit=False)
                 post.creator = request.user
                 post.save()
-
             return HttpResponseRedirect(reverse('index'))
 
         else:
@@ -201,12 +201,26 @@ def register(request):
 @login_required
 def update_post(request):
     if request.method == 'POST':
-        #post_id = request.POST.get('postId')
-        print(request.POST.get('newPostText'));
-        #new_post_text = request.POST.get('newPostText')
-        #post = Post.objects.get(id=post_id)
-        #post.post_text = new_post_text
-        #print(f"Post creator: {post.creator }")
-        #post.save()
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
+        # decode request using json
+        data = json.loads(request.body)
+        post_id = data.get('postId')
+        new_post_text = data.get('newPostText')
+        post_creator = data.get('postCreator')
+        print(post_id)
+        print(new_post_text)
+
+        # Check if the post creator the same as user
+        if post_creator != request.user.username:
+            return JsonResponse({'success': False, 'error': 'Post creator does not match current user.'})
+
+        try:
+            post = Post.objects.get(id=post_id)
+            post.post_text = new_post_text
+            post.save()
+            print("Data updated")
+            return JsonResponse({'success': True})
+        except Post.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Post not found.'})
+
+        
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'})

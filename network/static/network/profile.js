@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('editing the post with id ' + postId);  
             let postText = document.querySelector('#post-text-'+ postId);
             console.log(postText.innerText);
+            let postCreator = document.querySelector('#post-creator-' + postId).text;
+            console.log('Creator: ' + postCreator);
 
             // replace text field with input field
             let postEdit = document.createElement('input');
@@ -29,13 +31,39 @@ document.addEventListener('DOMContentLoaded', function() {
             // Saving the text
             saveButton.addEventListener('click', function saveClick() {
                 let newPostText = postEdit.value;
+                console.log("new text: "+ newPostText)
                 if (postText.innerText === newPostText) {
                     console.log("Text was not changed");
                 } else {
-                    console.log("Saving the text: " + newPostText);
                     
+                    const data = {
+                        postId: postId,
+                        newPostText: newPostText,
+                        postCreator: postCreator// add more key-value pairs as needed
+                    };
+
+                    console.log("Saving the text: " + newPostText);
+                    console.log("postID: "+ postId)
+                    fetch('update-post-text', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Success: ', data);
+                        postText.innerText = newPostText;
+                    })
+                    .catch(error => {
+                        console.error('Error: ', error);
+                    });
+                    console.log(data);  
+            
                     // prepare AJAX request
-                    let xhr = new XMLHttpRequest();
+                    
+                    /*let xhr = new XMLHttpRequest();
                     xhr.open('POST', 'update-post-text', true);
                     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
                     xhr.send(JSON.stringify({
@@ -51,7 +79,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 console.log("Error updating post text");
                             }
                         }
-                    };                                        
+                    };
+                    */                                        
                 }
                 // Remove event listener after executing it
                 saveButton.removeEventListener('click', saveClick);
@@ -71,4 +100,34 @@ document.addEventListener('DOMContentLoaded', function() {
             });     
         });
     });
+
+    document.querySelectorAll('.heart').forEach((like) => {
+        like.addEventListener('click', function() {
+            
+            let postId = like.getAttribute('like-id');
+            console.log("postId " + postId);
+            if (like.classList.contains('bi-heart-fill')) {
+                like.classList.remove('bi-heart-fill');
+                like.classList.add('bi-heart');
+                console.log("unlike");
+            } else {
+                like.classList.remove('bi-heart');
+                like.classList.add('bi-heart-fill');
+                console.log("like");
+            }
+
+        });
+    });
+    /*
+    document.querySelectorAll('.no-heart').forEach((like) => {
+        like.addEventListener('click', function() {
+            console.log("like");    
+            let postId = like.getAttribute('like-id');
+            console.log("postId " + postId);
+            like.classList.remove('bi-heart', 'no-heart');
+            like.classList.add('bi-heart-fill', 'heart');
+        });
+    });
+    */
+
 });

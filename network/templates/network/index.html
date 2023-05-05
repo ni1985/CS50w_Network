@@ -21,10 +21,17 @@
         <div>
             <p>-----------</p>
             <!--<a href="{% url 'profile' post.creator %}"><p>{{ post.creator }}</p></a>-->
-            <a href="/profile/{{ post.creator }}"><p>{{ post.creator }}</p></a>
+            <a href="/profile/{{ post.creator }}" id="post-creator-{{ post.id }}"><p>{{ post.creator }}</p></a>
             <p id="post-text-{{ post.id }}">{{ post.post_text }}</p>   
             <p>{{ post.post_time }}</p>
-            <p>Likes: {{ post.post_likes }}</p>
+
+            {% if user in post.likes.all %}
+                <i class="bi bi-heart-fill heart" like-id="{{ post.id }}"></i>
+            {% else %}
+                <i class="bi bi-heart heart" like-id="{{ post.id }}"></i>
+            {% endif %}
+            <p>Likes: {{ post.likes.count }}</p>
+
             {% if user.is_authenticated and post.creator == user %}
                 <button type="button" class="btn btn-primary btn-sm edit-post" data-post-id="{{ post.id }}">Edit</button>
                 <button type="button" class="btn btn-primary btn-sm save-post" id="save-button-{{ post.id }}" hidden="hidden">Save</button>

@@ -10,29 +10,36 @@ class User(AbstractUser):
 class Post(models.Model):
     creator = models.ForeignKey(
         User,
-        on_delete = models.CASCADE)#,
-        #related_name='creator')
+        on_delete = models.CASCADE)
     post_text = models.TextField()
     post_time = models.DateTimeField(auto_now_add=True)
-    post_likes = models.IntegerField(default=0)
-
-    def __str__(self):
-        return f"Post id {self.id}; User: {self.creator}; Likes: {self.post_likes}"
-
-
-class Comments(models.Model):
-    user_id = models.ForeignKey(
+    #post_likes = models.IntegerField(default=0)
+    likes = models.ManyToManyField(
         User,
-        on_delete = models.CASCADE,
-        related_name='commenter')
-    post_id = models.ForeignKey(
-        Post,
-        on_delete = models.CASCADE)
-    date_time = models.DateTimeField(auto_now_add=True)
-    comment_text = models.TextField()
+        blank = True,
+        related_name = 'Likes'
+    )
+
+    def count_likes(self):
+        return str(self.likes.count())
 
     def __str__(self):
-        return f"Comment: {self.id}, User: {User.commenter}"
+        return f"Post id {self.id}; User: {self.creator}; Likes: {self.count_likes()}"
+
+
+#class Comments(models.Model):
+#    user_id = models.ForeignKey(
+#        User,
+#        on_delete = models.CASCADE,
+#        related_name='commenter')
+#    post_id = models.ForeignKey(
+#        Post,
+#        on_delete = models.CASCADE)
+#    date_time = models.DateTimeField(auto_now_add=True)
+#    comment_text = models.TextField()
+
+#    def __str__(self):
+#        return f"Comment: {self.id}, User: {User.commenter}"
 
 
 class Follow(models.Model):
@@ -46,6 +53,14 @@ class Follow(models.Model):
         User,
         blank = True,
         related_name='followed')
+
+#class Likes(models.Model):
+#    user_id = models.ForeignKey(
+#        User,
+#        on_delete = models.CASCADE,
+#        related_name='like')
+#    post_id = 
+    
 
 # MOVED to forms.py
 # class PostForm(ModelForm):
