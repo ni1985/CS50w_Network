@@ -64,6 +64,8 @@ def profile(request, user_name):
             user_obj = User.objects.get(username=request.user.username)
             subscribed_obj = User.objects.get(username=user_name)
             print(f"subscribed_obj {subscribed_obj}")
+
+            # get all follwed users
             follow_obj = Follow.objects.filter(Q(user_id = user_obj) & Q(subscribed = subscribed_obj) )
             
             # Unsubscribing from the user            
@@ -222,5 +224,50 @@ def update_post(request):
         except Post.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Post not found.'})
 
+        
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'})
+
+@csrf_exempt
+@login_required
+def update_like(request):
+    if request.method == 'POST':
+        # decode request using json
+        data = json.loads(request.body)
+        post_id = data.get('postId')
+        like_action = data.get('like_action')
+        like_user = request.user
+        print(post_id)
+        print(like_action)
+        print(like_user)
+
+        try:
+            
+            # get all users who liked the post
+            like_obj = Post.objects.filter(Q(id = post_id) & Q(likes = like_user))
+            print(like_obj)
+
+            # UnLike the post            
+            if like_obj.exists():
+                #subscribed_user = follow_obj.values_list('subscribed__username', flat=True)
+                print(f"unlike the post {post_id} by User {like_user}") 
+                post = Post.objects.get(id=post_id)
+                # Remove the user from the likes list
+                post.likes.remove(like_user)
+            else:
+            # Like the post
+                like_user_obj = User.objects.get(username=like_user)
+                print(f"like the post {post_id} by User {like_user}")
+                like_obj = Post.objects.get(id=post_id)
+                like_obj.likes.add(like_user_obj)
+                like_obj.save()
+            #post = Post.objects.get(id=post_id)
+            #post.post_text = new_post_text
+            #post.save()
+            like_count = Post.objects.get(id=post_id).likes.count()
+            print(f"number of likes: {like_count}")
+            print("Data updated")
+            return JsonResponse({'success': True,  'like_count':like_count})
+        except Post.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Post not found.'})
         
     return JsonResponse({'success': False, 'error': 'Invalid request method.'})

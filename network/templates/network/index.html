@@ -30,7 +30,7 @@
             {% else %}
                 <i class="bi bi-heart heart" like-id="{{ post.id }}"></i>
             {% endif %}
-            <p>Likes: {{ post.likes.count }}</p>
+            <p id = "like-count-{{ post.id }}">Likes: {{ post.likes.count }}</p>
 
             {% if user.is_authenticated and post.creator == user %}
                 <button type="button" class="btn btn-primary btn-sm edit-post" data-post-id="{{ post.id }}">Edit</button>

@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Saving the text
             saveButton.addEventListener('click', function saveClick() {
                 let newPostText = postEdit.value;
-                console.log("new text: "+ newPostText)
+                console.log("new text: "+ newPostText);
                 if (postText.innerText === newPostText) {
                     console.log("Text was not changed");
                 } else {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const data = {
                         postId: postId,
                         newPostText: newPostText,
-                        postCreator: postCreator// add more key-value pairs as needed
+                        postCreator: postCreator
                     };
 
                     console.log("Saving the text: " + newPostText);
@@ -59,32 +59,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     .catch(error => {
                         console.error('Error: ', error);
                     });
-                    console.log(data);  
-            
-                    // prepare AJAX request
-                    
-                    /*let xhr = new XMLHttpRequest();
-                    xhr.open('POST', 'update-post-text', true);
-                    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-                    xhr.send(JSON.stringify({
-                        postId: postId,
-                        newPostText: newPostText
-                    }));
-                    // response from the server
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === XMLHttpRequest.DONE) {
-                            if (xhr.status === 200) {
-                                console.log("Post text updated successfully");
-                            } else {
-                                console.log("Error updating post text");
-                            }
-                        }
-                    };
-                    */                                        
+                    console.log(data);                    
                 }
                 // Remove event listener after executing it
                 saveButton.removeEventListener('click', saveClick);
-            });
+            }); 
 
             // restore the text field if end without saving
             postEdit.addEventListener('blur', function() {
@@ -101,8 +80,38 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    function server_like(user_action){
-        console.log(user_action);
+    function server_like(user_action, id){
+        console.log(user_action + "post ID " + id);
+        //sending the request to the server
+        const data = {
+            postId: id,
+            like_action: user_action,
+        };
+        let responseData;
+        console.log("Updating Like field with action" + data.like_action);
+        console.log("postID: "+ data.postId)
+        fetch('update-post-like', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success: ', data);
+            responseData = data;
+        })
+        .catch(error => {
+            console.error('Error: ', error);
+        });
+
+        console.log('updating number of likes');
+        console.log(responseData.like_count);
+        let like_number = document.querySelector('p#like-count-'+id);
+        console.log("old number of likes" + like_number.innerText);
+        like_number.innerText = responseData.like_count;
+        console.log("new number of likes" + like_number.innerText);
     }
 
     document.querySelectorAll('.heart').forEach((like) => {
@@ -113,13 +122,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (like.classList.contains('bi-heart-fill')) {
                 like.classList.remove('bi-heart-fill');
                 like.classList.add('bi-heart');
-                server_like("unlike2");
-                console.log("unlike");
+                server_like("unlike", postId);
             } else {
                 like.classList.remove('bi-heart');
                 like.classList.add('bi-heart-fill');
-                console.log("like");
-                server_like("like2");
+                server_like("like2", postId);
             }
 
         });
