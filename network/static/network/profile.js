@@ -101,6 +101,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    function server_like(user_action){
+        console.log(user_action);
+    }
+
     document.querySelectorAll('.heart').forEach((like) => {
         like.addEventListener('click', function() {
             
@@ -109,11 +113,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (like.classList.contains('bi-heart-fill')) {
                 like.classList.remove('bi-heart-fill');
                 like.classList.add('bi-heart');
+                server_like("unlike2");
                 console.log("unlike");
             } else {
                 like.classList.remove('bi-heart');
                 like.classList.add('bi-heart-fill');
                 console.log("like");
+                server_like("like2");
             }
 
         });
@@ -129,5 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     */
+
 
 });
