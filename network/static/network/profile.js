@@ -101,17 +101,15 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             console.log('Success: ', data);
             responseData = data;
+            console.log("number of likes : "+data.like_count);
+            let like_number = document.querySelector('p#like-count-'+id);
+            console.log("old number of likes : " + like_number.innerText);
+            like_number.innerText = "Likes: "+data.like_count;
+            console.log("new number of likes: " + like_number.innerText);
         })
         .catch(error => {
             console.error('Error: ', error);
         });
-
-        console.log('updating number of likes');
-        console.log(responseData.like_count);
-        let like_number = document.querySelector('p#like-count-'+id);
-        console.log("old number of likes" + like_number.innerText);
-        like_number.innerText = responseData.like_count;
-        console.log("new number of likes" + like_number.innerText);
     }
 
     document.querySelectorAll('.heart').forEach((like) => {
@@ -131,17 +129,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
         });
     });
-    /*
-    document.querySelectorAll('.no-heart').forEach((like) => {
-        like.addEventListener('click', function() {
-            console.log("like");    
-            let postId = like.getAttribute('like-id');
-            console.log("postId " + postId);
-            like.classList.remove('bi-heart', 'no-heart');
-            like.classList.add('bi-heart-fill', 'heart');
-        });
-    });
-    */
-
-
 });
