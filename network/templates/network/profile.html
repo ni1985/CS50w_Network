@@ -1,4 +1,5 @@
 {% extends "network/layout.html" %}
+{% load static %}   
 
 {% block body %}
     <h3>Profile of {{ user_name }}</h3>
@@ -24,10 +25,20 @@
         {% for post in posts %}
         <div>
             <p>-----------</p>
-            <a href="{% url 'profile' user_name %}"><p>{{ user_name }}</p></a>
-            <p>{{ post.post_text }}</p>
+            <a href="{% url 'profile' user_name %}" id="post-creator-{{ post.id }}"><p>{{ user_name }}</p></a>
+            <p id="post-text-{{ post.id }}">{{ post.post_text }}</p>
             <p>{{ post.post_time }}</p>
-            <p>Likes: {{ post.post_likes }}</p>
+            {% if user in post.likes.all %}
+                <i class="bi bi-heart-fill heart" like-id="{{ post.id }}"></i>
+            {% else %}
+                <i class="bi bi-heart heart" like-id="{{ post.id }}"></i>
+            {% endif %}
+            <p id = "like-count-{{ post.id }}">Likes: {{ post.likes.count }}</p>
+
+            {% if user.is_authenticated and post.creator == user %}
+                <button type="button" class="btn btn-primary btn-sm edit-post" data-post-id="{{ post.id }}">Edit</button>
+                <button type="button" class="btn btn-primary btn-sm save-post" id="save-button-{{ post.id }}" hidden="hidden">Save</button>
+            {% endif %}
         </div>
         {% endfor %}
     </div>
@@ -46,4 +57,6 @@
 
 {% endblock %}
 
-
+{% block script %}
+    <script type="module" src="{% static 'network/profile.js' %}"></script>
+{% endblock %}

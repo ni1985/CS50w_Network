@@ -37,7 +37,7 @@
                 <button type="button" class="btn btn-primary btn-sm save-post" id="save-button-{{ post.id }}" hidden="hidden">Save</button>
             {% endif %}
         </div>
-        {% endfor %}
+        {% endfor %}    
     </div>
 
     <nav aria-label="Page navigation">
@@ -55,6 +55,6 @@
 {% endblock %}
 
 {% block script %}
-    <script src="{% static 'network/profile.js' %}"></script>
+    <script type="module" src="{% static 'network/profile.js' %}"></script>
 {% endblock %}
 

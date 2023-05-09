@@ -40,7 +40,7 @@ def index(request):
 
     # create a paginator
     page_number = request.GET.get('page')
-    paginator = Paginator(posts, per_page = 2)
+    paginator = Paginator(posts, per_page = 10)
     page_obj = paginator.get_page(page_number)
     #context = {"page_obj": page_obj}
 
@@ -93,7 +93,7 @@ def profile(request, user_name):
 
     # create a paginator
     page_number = request.GET.get('page')
-    paginator = Paginator(user_post, per_page = 2)
+    paginator = Paginator(user_post, per_page = 10)
     page_obj = paginator.get_page(page_number)
 
     # Get number of followed users
@@ -139,7 +139,7 @@ def favorites(request):
 
     # create a paginator
     page_number = request.GET.get('page')
-    paginator = Paginator(user_post, per_page = 2)
+    paginator = Paginator(user_post, per_page = 10)
     page_obj = paginator.get_page(page_number)
 
     print(user_post)

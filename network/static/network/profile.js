@@ -1,3 +1,6 @@
+import { UPDATE_POST_LIKE_URL } from './constants.js';
+import { UPDATE_POST_TEXT_URL } from './constants.js';
+
 document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('.edit-post').forEach((editButton) => {
@@ -25,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             editButton.setAttribute("hidden", "hidden");
 
             // Select the save button
-            saveButton = document.querySelector('#save-button-'+postId);
+            const saveButton = document.querySelector('#save-button-'+postId);
             saveButton.removeAttribute("hidden");
             
             // Saving the text
@@ -44,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     console.log("Saving the text: " + newPostText);
                     console.log("postID: "+ postId)
-                    fetch('update-post-text', {
+                    fetch(UPDATE_POST_TEXT_URL, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -90,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let responseData;
         console.log("Updating Like field with action" + data.like_action);
         console.log("postID: "+ data.postId)
-        fetch('update-post-like', {
+        fetch(UPDATE_POST_LIKE_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
