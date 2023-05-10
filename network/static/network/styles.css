@@ -5,3 +5,63 @@
 .no-heart {
     color: red;
 }
+
+.follow {
+    height: 50px; 
+    width: 200px;
+    padding: 10px 0px;
+    margin: 0px 0px;
+    font-size: 16px;
+    text-align: center;
+    line-height: 0px;
+}
+
+.heading{
+    text-align: center;
+    color: rgba(5, 17, 124, 0.923);
+    margin-top: 20px;
+}
+
+.rcorners2 {
+    border-radius: 20px;
+    border: 2px solid #332ec990;
+    margin: 15px;
+    padding: 15px;
+  }
+
+p.thick {
+    font-weight: bold;
+  }
+
+p.sm-italic {
+    font-style: italic;
+    font-size: small;
+  }
+  
+.inline {
+    display: flex;
+  }
+
+.margin-left{
+    margin-left: 10px;
+  }
+
+.post{
+    margin: 20px;   
+  }
+
+.submit{
+    display: flex;
+    justify-content: flex-start;
+    margin: 20px
+  }
+
+.btn-navigation{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bg-navbar{
+    background-color: rgb(118, 118, 255);
+}
