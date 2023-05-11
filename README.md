@@ -4,6 +4,7 @@ CS50w: Project 4: Social Network
 
 Part of Harward course CS50’s [Web Programming with Python and JavaScript](https://cs50.harvard.edu/web/2020/projects/4/network/)
 
+## Specification
 Using Python, JavaScript, HTML, and CSS, complete the implementation of a social network that allows users to make posts, follow other users, and “like” posts. You must fulfill the following requirements:
 
 - New Post: Users who are signed in should be able to write a new text-based post by filling in text into a text area and then clicking a button to submit the post. The screenshot at the top of this specification shows the “New Post” box at the top of the “All Posts” page. You may choose to do this as well, or you may make the “New Post” feature a separate page.
